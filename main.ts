@@ -1,36 +1,37 @@
 input.onPinPressed(TouchPin.P0, function () {
     receiver = !(receiver)
 })
-function translateletter (text: string) {
-    for (let index = 0; index <= morsealphabet.length - 1; index++) {
-        if (morsealphabet[index] == text) {
-            return alphabet[index]
-        }
-    }
-    return ""
-}
-function lettercommit () {
-    msgmorse.push(letter)
-    letter = ""
-}
 input.onButtonPressed(Button.A, function () {
     letter = "" + letter + "."
 })
+function translateletter (text: string) {
+    while (index <= morsealphabet.length - 1) {
+        if (morsealphabet[index] == text) {
+            return alphabet[index]
+        }
+        index += 1
+    }
+    return ""
+}
 input.onButtonPressed(Button.AB, function () {
-    if (letter != "") {
-        lettercommit()
-    } else {
-        for (let value of msgmorse) {
-            msg = "" + msg + translateletter(value)
-        }
-        if (!(receiver)) {
+    if (!(receiver)) {
+        if (letter != "") {
+            lettercommit()
+        } else {
+            for (let value of msgmorse) {
+                msg = "" + msg + translateletter(value)
+            }
             radio.sendString("" + (msg))
+            basic.showIcon(IconNames.Yes)
+            basic.pause(1000)
+            basic.clearScreen()
+            reset()
         }
-        reset()
     }
 })
 radio.onReceivedString(function (receivedString) {
     if (receiver) {
+        music.startMelody(music.builtInMelody(Melodies.BaDing), MelodyOptions.Once)
         basic.showString(receivedString)
         msg = receivedString
     }
@@ -50,6 +51,11 @@ function reset () {
     msgmorse = []
     msg = ""
 }
+function lettercommit () {
+    msgmorse.push(letter)
+    letter = ""
+}
+let index = 0
 let msg = ""
 let morsealphabet: string[] = []
 let alphabet: string[] = []
@@ -57,11 +63,65 @@ let msgmorse: string[] = []
 let letter = ""
 let receiver = false
 radio.setGroup(102)
-receiver = true
+receiver = false
 letter = ""
 msgmorse = []
-alphabet = ["A", "B", "C"]
-morsealphabet = [".-", "-...", "-.-."]
+alphabet = [
+"A",
+"B",
+"C",
+"D",
+"E",
+"F",
+"G",
+"H",
+"I",
+"J",
+"K",
+"L",
+"M",
+"N",
+"O",
+"P",
+"Q",
+"R",
+"S",
+"T",
+"U",
+"V",
+"W",
+"X",
+"Y",
+"Z"
+]
+morsealphabet = [
+".-",
+"-...",
+"-.-.",
+"-..",
+".",
+"..-.",
+"--.",
+"....",
+"..",
+".---",
+"-.-",
+".-..",
+"--",
+"-.",
+"---",
+".--.",
+"--.-",
+".-.",
+"...",
+"-",
+"..-",
+"...-",
+".--",
+"-..-",
+"-.--",
+"--.."
+]
 msg = ""
 basic.forever(function () {
     if (receiver) {
