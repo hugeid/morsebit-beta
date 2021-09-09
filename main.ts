@@ -1,10 +1,12 @@
 input.onPinPressed(TouchPin.P0, function () {
     receiver = !(receiver)
+    basic.clearScreen()
 })
 input.onButtonPressed(Button.A, function () {
     letter = "" + letter + "."
 })
 function translateletter (text: string) {
+    index = 0
     while (index <= morsealphabet.length - 1) {
         if (morsealphabet[index] == text) {
             return alphabet[index]
@@ -21,7 +23,7 @@ input.onButtonPressed(Button.AB, function () {
             for (let value of msgmorse) {
                 msg = "" + msg + translateletter(value)
             }
-            radio.sendString("" + (msg))
+            radio.sendString(msg)
             basic.showIcon(IconNames.Yes)
             basic.pause(1000)
             basic.clearScreen()
@@ -41,7 +43,7 @@ input.onButtonPressed(Button.B, function () {
 })
 input.onGesture(Gesture.Shake, function () {
     if (receiver) {
-        basic.showString("" + (msg))
+        basic.showString(msg)
     } else {
         reset()
     }
@@ -52,19 +54,22 @@ function reset () {
     msg = ""
 }
 function lettercommit () {
+    msg = ""
     msgmorse.push(letter)
+    basic.showString("" + (translateletter(letter)))
     letter = ""
 }
 let index = 0
-let msg = ""
 let morsealphabet: string[] = []
 let alphabet: string[] = []
 let msgmorse: string[] = []
+let msg = ""
 let letter = ""
 let receiver = false
 radio.setGroup(102)
 receiver = false
 letter = ""
+msg = ""
 msgmorse = []
 alphabet = [
 "A",
@@ -122,7 +127,6 @@ morsealphabet = [
 "-.--",
 "--.."
 ]
-msg = ""
 basic.forever(function () {
     if (receiver) {
         basic.showLeds(`
@@ -132,7 +136,5 @@ basic.forever(function () {
             . . . . .
             . . . . .
             `)
-    } else {
-        basic.clearScreen()
     }
 })

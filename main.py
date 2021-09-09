@@ -1,6 +1,7 @@
 def on_pin_pressed_p0():
     global receiver
     receiver = not (receiver)
+    basic.clear_screen()
 input.on_pin_pressed(TouchPin.P0, on_pin_pressed_p0)
 
 def on_button_pressed_a():
@@ -24,7 +25,7 @@ def on_button_pressed_ab():
         else:
             for value in msgmorse:
                 msg = "" + msg + translateletter(value)
-            radio.send_string("" + (msg))
+            radio.send_string(msg)
             basic.show_icon(IconNames.YES)
             basic.pause(1000)
             basic.clear_screen()
@@ -46,7 +47,7 @@ input.on_button_pressed(Button.B, on_button_pressed_b)
 
 def on_gesture_shake():
     if receiver:
-        basic.show_string("" + (msg))
+        basic.show_string(msg)
     else:
         reset()
 input.on_gesture(Gesture.SHAKE, on_gesture_shake)
@@ -59,6 +60,7 @@ def reset():
 def lettercommit():
     global letter
     msgmorse.append(letter)
+    basic.show_string("" + (translateletter(letter)))
     letter = ""
 index = 0
 msg = ""
@@ -134,6 +136,4 @@ def on_forever():
                         . . . . .
                         . . . . .
         """)
-    else:
-        basic.clear_screen()
 basic.forever(on_forever)
