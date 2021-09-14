@@ -1,3 +1,6 @@
+# to be removed
+# 
+
 def on_pin_pressed_p0():
     global receiver
     receiver = not (receiver)
@@ -5,12 +8,14 @@ def on_pin_pressed_p0():
 input.on_pin_pressed(TouchPin.P0, on_pin_pressed_p0)
 
 def on_button_pressed_a():
-    global letter
+    global receiver, letter
+    receiver = False
     letter = "" + letter + "."
 input.on_button_pressed(Button.A, on_button_pressed_a)
 
 def translateletter(text: str):
     global index
+    index = 0
     while index <= len(morsealphabet) - 1:
         if morsealphabet[index] == text:
             return alphabet[index]
@@ -25,7 +30,7 @@ def on_button_pressed_ab():
         else:
             for value in msgmorse:
                 msg = "" + msg + translateletter(value)
-            radio.send_string(msg)
+            radio.send_string("" + (msg))
             basic.show_icon(IconNames.YES)
             basic.pause(1000)
             basic.clear_screen()
@@ -41,37 +46,41 @@ def on_received_string(receivedString):
 radio.on_received_string(on_received_string)
 
 def on_button_pressed_b():
-    global letter
+    global receiver, letter
+    receiver = False
     letter = "" + letter + "-"
 input.on_button_pressed(Button.B, on_button_pressed_b)
 
 def on_gesture_shake():
     if receiver:
-        basic.show_string(msg)
+        basic.show_string("" + (msg))
     else:
         reset()
 input.on_gesture(Gesture.SHAKE, on_gesture_shake)
 
 def reset():
-    global letter, msgmorse, msg
+    global letter, msgmorse, msg, receiver
     letter = ""
     msgmorse = []
     msg = ""
+    receiver = True
 def lettercommit():
-    global letter
+    global msg, letter
+    msg = ""
     msgmorse.append(letter)
     basic.show_string("" + (translateletter(letter)))
     letter = ""
 index = 0
-msg = ""
 morsealphabet: List[str] = []
 alphabet: List[str] = []
 msgmorse: List[str] = []
+msg = ""
 letter = ""
 receiver = False
 radio.set_group(102)
-receiver = False
+receiver = True
 letter = ""
+msg = ""
 msgmorse = []
 alphabet = ["A",
     "B",
@@ -125,7 +134,6 @@ morsealphabet = [".-",
     "-..-",
     "-.--",
     "--.."]
-msg = ""
 
 def on_forever():
     if receiver:

@@ -1,8 +1,16 @@
+// to be removed
+// 
 input.onPinPressed(TouchPin.P0, function () {
     receiver = !(receiver)
     basic.clearScreen()
 })
+function translate () {
+    for (let value of msgmorse) {
+        msg = "" + msg + translateletter(value)
+    }
+}
 input.onButtonPressed(Button.A, function () {
+    receiver = false
     letter = "" + letter + "."
 })
 function translateletter (text: string) {
@@ -20,9 +28,7 @@ input.onButtonPressed(Button.AB, function () {
         if (letter != "") {
             lettercommit()
         } else {
-            for (let value of msgmorse) {
-                msg = "" + msg + translateletter(value)
-            }
+            translate()
             radio.sendString(msg)
             basic.showIcon(IconNames.Yes)
             basic.pause(1000)
@@ -39,6 +45,7 @@ radio.onReceivedString(function (receivedString) {
     }
 })
 input.onButtonPressed(Button.B, function () {
+    receiver = false
     letter = "" + letter + "-"
 })
 input.onGesture(Gesture.Shake, function () {
@@ -52,6 +59,7 @@ function reset () {
     letter = ""
     msgmorse = []
     msg = ""
+    receiver = true
 }
 function lettercommit () {
     msg = ""
@@ -67,7 +75,7 @@ let msg = ""
 let letter = ""
 let receiver = false
 radio.setGroup(102)
-receiver = false
+receiver = true
 letter = ""
 msg = ""
 msgmorse = []
